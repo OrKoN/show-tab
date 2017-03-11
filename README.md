@@ -4,6 +4,8 @@ Simple and handy extension which replaces the new tab page in Google Chrome and 
 
 ## Screenshots
 
+![ShowTab](screenshot.png)
+
 ## License
 
 MIT
