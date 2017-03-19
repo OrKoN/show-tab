@@ -230,7 +230,7 @@ $(function() {
 
   $('.my-popup').popup();
   $('.open-github').click(() => {
-    window.open('https://twitter.com/OrKoN', '_blank');
+    window.open('https://github.com/OrKoN/show-tab', '_blank');
   });
   $('.open-twitter').click(() => {
     window.open('https://twitter.com/OrKoN', '_blank');

@@ -1,6 +1,6 @@
 {
   "name": "ShowTab",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "manifest_version": 2,
   "description": "ShowTab: track TV shows you watch in the new tab",
   "homepage_url": "https://github.com/OrKoN/show-tab",
