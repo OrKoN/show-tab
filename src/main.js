@@ -84,36 +84,39 @@ $(function() {
   }
 
   function saveShow(id, currentEpisode, currentSeason) {
-    $.ajax({
-      url: 'http://api.tvmaze.com/shows/' + id + '?embed[]=episodes&embed[]=seasons'
-    }).done(function(show) {
-      const series = readSeries();
-      const newShow = {
-        id: show.id,
-        name: show.name,
-        image: show.image,
-        summary: show.summary,
-        seasons: show._embedded.seasons,
-        episodes: show._embedded.episodes,
-        currentEpisode: currentEpisode || 1,
-        currentSeason: currentSeason || 1,
-        genres: show.genres,
-        externals: show.externals,
-      };
-      newShow.seasons.forEach(season => {
-        season.episodeOrder = countEpisodes(season, newShow.episodes);
+    return new Promise(function (resolve) {
+      $.ajax({
+        url: 'http://api.tvmaze.com/shows/' + id + '?embed[]=episodes&embed[]=seasons'
+      }).done(function(show) {
+        const newShow = {
+          id: show.id,
+          name: show.name,
+          image: show.image,
+          summary: show.summary,
+          seasons: show._embedded.seasons,
+          episodes: show._embedded.episodes,
+          currentEpisode: currentEpisode || 1,
+          currentSeason: currentSeason || 1,
+          genres: show.genres,
+          externals: show.externals,
+        };
+        newShow.seasons.forEach(season => {
+          season.episodeOrder = countEpisodes(season, newShow.episodes);
+        });
+        
+        resolve(newShow);
       });
-      series.push(newShow);
-      writeSeries(series);
-      render();
-    });
+    })
   }
 
   function refreshSeries() {
     const series = readSeries();
     Promise.all(series.map(serie => {
       return saveShow(serie.id, serie.currentEpisode, serie.currentSeason);
-    })).then(render);
+    })).then((series) => {
+        writeSeries(series);
+        render();
+    });
   }
 
   $('.main-search')
@@ -138,7 +141,12 @@ $(function() {
         }
       },
       onSelect(result, response) {
-        saveShow(result.id);
+        saveShow(result.id).then(function (newShow) {
+          const series = readSeries();
+          series.push(newShow);
+          writeSeries(series);
+          render();
+        });
       }
     });
 
@@ -235,7 +243,7 @@ $(function() {
   $('.open-twitter').click(() => {
     window.open('https://twitter.com/OrKoN', '_blank');
   });
-  $('.refreshr').click(() => {
+  $('button.refresh').click(() => {
     refreshSeries();
   });
 });
